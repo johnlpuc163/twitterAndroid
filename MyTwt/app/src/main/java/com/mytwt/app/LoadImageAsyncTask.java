@@ -8,9 +8,6 @@ import android.widget.ImageView;
 import java.io.IOException;
 import java.net.URL;
 
-/**
- * Created by John on 14-3-21.
- */
 public class LoadImageAsyncTask extends AsyncTask<String, Void, Drawable> {
     ImageView avatarView;
     public LoadImageAsyncTask(ImageView avatarView) {

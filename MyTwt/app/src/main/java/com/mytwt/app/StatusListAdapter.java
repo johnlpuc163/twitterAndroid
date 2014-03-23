@@ -15,9 +15,6 @@ import java.util.List;
 import twitter4j.Status;
 import twitter4j.User;
 
-/**
- * Created by John on 14-3-21.
- */
 public class StatusListAdapter extends ArrayAdapter<Status> {
     private LayoutInflater inflater;
 
@@ -66,11 +63,9 @@ public class StatusListAdapter extends ArrayAdapter<Status> {
     }
 
     public void appendOlder(List<Status> statii) {
-        Log.d("Test","appending");
         for (Status status : statii) {
             add(status);
         }
-        Log.d("Test","appending finished");
     }
 
     public long getFirstId() {

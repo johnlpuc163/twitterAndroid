@@ -9,9 +9,7 @@ import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 
-/**
- * Created by John on 14-3-21.
- */
+
 public class LoadMoreAsyncTask extends AsyncTask<Void, Void, LoadMoreAsyncTask.LoadMoreStatusesResult> {
 
     private long targetId;
@@ -58,20 +56,9 @@ public class LoadMoreAsyncTask extends AsyncTask<Void, Void, LoadMoreAsyncTask.L
                     break;
                 case LOAD_OLDER:
                     statii = twitter.getHomeTimeline(new Paging(1).maxId(targetId));
-                    Log.d("Test", "got older tweets");
                 default:
                     break;
             }
-            /*
-            if (loadType == LOAD_TIMELINE) {
-                statii = twitter.getHomeTimeline();
-            } else if (loadType == LOAD_NEWER){
-                statii = twitter.getHomeTimeline(new Paging(1).sinceId(targetId));
-            }
-            else{
-                statii = twitter.getHomeTimeline(new Paging(1).maxId(targetId));
-            }
-            */
         } catch (Exception e) {
             throw new RuntimeException("Unable to load timeline", e);
         }

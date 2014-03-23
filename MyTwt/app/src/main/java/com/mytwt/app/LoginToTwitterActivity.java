@@ -27,20 +27,14 @@ public class LoginToTwitterActivity extends Activity {
         WebView webView = (WebView) findViewById(R.id.logintotwitter_webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new LoginToTwitterWebViewClient());
-        Log.d("TestURL", "begin oauth");
         webView.loadUrl(mUrl);
-        Log.d("TestURL", "after oauth");
     }
 
     private class LoginToTwitterWebViewClient extends WebViewClient {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Log.d("TestURL", "entered shouldover");
-            Log.d("TestURL", url);
             if (url.startsWith(getString(R.string.TWITTER_CALLBACK_URL))) {
-                Log.d("TestURL", "callback url recieved");
-                Log.d("TestURL", url);
                 Intent intent = new Intent();
                 intent.putExtra(CALLBACK_URL_KEY, url);
                 setResult(Activity.RESULT_OK, intent);

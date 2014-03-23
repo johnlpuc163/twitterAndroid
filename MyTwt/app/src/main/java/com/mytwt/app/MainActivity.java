@@ -34,11 +34,13 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
 public class MainActivity extends ListActivity implements LoadMoreAsyncTask.LoadMoreStatusesResponder {
-    //formal
+
     private StatusListAdapter adapter;
-    User user;
-    View headerView;
-    View footerView;
+    private User user;
+    private View headerView;
+    private View footerView;
+    public static Twitter twitter;
+    public static AccessToken acsTkn;
     private final int LOAD_NEWER = 1;
     private final int LOAD_TIMELINE = 0;
     private final int LOAD_OLDER = -1;
@@ -51,21 +53,9 @@ public class MainActivity extends ListActivity implements LoadMoreAsyncTask.Load
     private static final String AUTH_KEY = "auth_key";
     private static final String AUTH_SEKRET_KEY = "auth_secret_key";
 
-    //to be checked
-    public static Twitter twitter;
-    public static AccessToken acsTkn;
-    private List<Status> statii;
-    Drawable drawable;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("TestURL","enter oncreate");
-        if( acsTkn == null){
-            Log.d("TestURL","null acstkn");
-        }
-        if( twitter == null){
-            Log.d("TestURL","null twitter");
-        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -77,51 +67,13 @@ public class MainActivity extends ListActivity implements LoadMoreAsyncTask.Load
             configureTwitter();
         }
 
-
-        /*
-        * String token = "702351582-n3I0cwhEfwJaBegW2F2pumkd9o4FCj131Dxmf0MR";
-            String tokenSecret = "1bJribAvZdNk88iMOjF6VudDgI1Z5MsECRauqdrYTJi6E";
-        * */
-        if(false){
-         String token = "702351582-NiH0sSLURX9ePzckfU8jGl6Wz3HlY0Iu84Fsbeev";
-        String tokenSecret = "UZE2i7hIdUAI72qwklDsUxqH4VmFoUhj9pbaseAr52gEN";
-             Log.d("TestURL", "init acsTKN");
-            acsTkn = new AccessToken(token, tokenSecret);
-            Log.d("TestURL","init twitter oauth");
-            twitter = TwitterFactory.getSingleton();
-            twitter.setOAuthConsumer(
-                    getString(R.string.TWITTER_CONSUMER_KEY),
-                    getString(R.string.TWITTER_CONSUMER_SECRET));
-            Log.d("TestURL","init twitter access");
-            twitter.setOAuthAccessToken(acsTkn);
-        }
-        //loadTimeline();
-        //    getUsrName getAccessTokenTask = new getUsrName();
-          //  getAccessTokenTask.execute();
-
         if (twitter == null) {
             loginToTwitter();
         } else {
-            Log.d("TestURL","begin to loadTimeline");
-            loadTimeline();
-        }
-
-
-    }
-
-    /*
-    @Override
-    protected void onResume() {
-        Log.d("TestURL","enter onresume");
-        super.onResume();
-        if (acsTkn == null) {
-            loginToTwitter();
-        } else {
-            Log.d("TestURL","begin to loadTimeline");
             loadTimeline();
         }
     }
-*/
+
     private void loadTimeline(){
         LoadTimelineAsyncTast loadtimelineTask = new LoadTimelineAsyncTast();
         loadtimelineTask.execute();
@@ -131,24 +83,15 @@ public class MainActivity extends ListActivity implements LoadMoreAsyncTask.Load
 
         @Override
         protected List<twitter4j.Status> doInBackground(Void... voids) {
-            Log.d("TestURL","enter asyncTask for usrName");
-            String username = "";
             List<twitter4j.Status> statii = null;
             try {
                 long userID = acsTkn.getUserId();
-                Log.d("TestURL","retrieving usrName");
                 user = twitter.showUser(userID);
-                Log.d("TestURL","retrieving usrname finish");
-                username = user.getName();
-                Log.d("TestURL","username got");
-                Log.d("TestURL", username);
                 statii = twitter.getHomeTimeline();
-                Log.d("TestURL", "gotHomeLine");
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return statii;
         }
 
@@ -191,9 +134,11 @@ public class MainActivity extends ListActivity implements LoadMoreAsyncTask.Load
             setTextToLoading(footerView,true);
             new LoadMoreAsyncTask(this, twitter, adapter.getLastId()-1, LOAD_OLDER).execute();
         } else {
-            // Watch out! Doesn't account for header/footer! -> Status status = adapter.getItem(position);
+            // item detail page
         }
-    } 
+    }
+
+    //set header, footer text
     private void setTextToLoading(View view, boolean flag){
         TextView loadMoreText = (TextView) view.findViewById(R.id.load_more_text);
         if (flag == true){
@@ -248,7 +193,6 @@ public class MainActivity extends ListActivity implements LoadMoreAsyncTask.Load
             twitter.setOAuthConsumer(
                     getString(R.string.TWITTER_CONSUMER_KEY),
                     getString(R.string.TWITTER_CONSUMER_SECRET));
-
             try {
                 RequestToken requestToken = twitter.getOAuthRequestToken(
                         getString(R.string.TWITTER_CALLBACK_URL));
@@ -292,19 +236,9 @@ public class MainActivity extends ListActivity implements LoadMoreAsyncTask.Load
         protected Void doInBackground(String... strings) {
             String verifier = strings[0];
             try {
-                Log.d("TestURL","start to get access token");
                 AccessToken accessToken = twitter.getOAuthAccessToken(verifier);
                 acsTkn = accessToken;
-                Log.d("TestURL","got access token");
-                Log.d("TestURL",accessToken.getToken());
-                Log.d("TestURL",accessToken.getTokenSecret());
                 twitter.setOAuthAccessToken(accessToken);
-                long userID = accessToken.getUserId();
-                User user = twitter.showUser(userID);
-                String username = user.getName();
-                Log.d("TestURL","username got");
-                Log.d("TestURL",username);
-                //Log.d(MainActivity.class.getSimpleName(), accessToken.getToken());
             } catch (Exception e) {
 
             }
@@ -313,21 +247,16 @@ public class MainActivity extends ListActivity implements LoadMoreAsyncTask.Load
 
         protected void onPostExecute(Void result) {
             storeAccessToken();
-            Log.d("TestURL","enter post execu");
             loadTimeline();
         }
     }
 
     private void storeAccessToken(){
         prefs = getSharedPreferences(APPLICATION_PREFERENCES, MODE_PRIVATE);
-        Log.d("TestURL","store acs tkn");
         Editor editor = prefs.edit();
-        Log.d("TestURL","got editor");
         editor.putString(AUTH_KEY, acsTkn.getToken());
         editor.putString(AUTH_SEKRET_KEY, acsTkn.getTokenSecret());
-        Log.d("TestURL","ready to commit edit");
         editor.commit();
-        Log.d("TestURL","finish store acs tkn");
     }
 
     private boolean configureTwitter() {
@@ -335,14 +264,12 @@ public class MainActivity extends ListActivity implements LoadMoreAsyncTask.Load
         String token = prefs.getString(AUTH_KEY, null);
         String tokenSecret = prefs.getString(AUTH_SEKRET_KEY, null);
         if (null != token && null != tokenSecret) {
-            Log.d("TestURL","ready to configureTwitter");
             acsTkn = new AccessToken(token, tokenSecret);
             twitter = TwitterFactory.getSingleton();
             twitter.setOAuthConsumer(
                     getString(R.string.TWITTER_CONSUMER_KEY),
                     getString(R.string.TWITTER_CONSUMER_SECRET));
             twitter.setOAuthAccessToken(acsTkn);
-            Log.d("TestURL","finish configureTwitter");
             return true;
         } else {
             return false;
