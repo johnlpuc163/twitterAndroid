@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MyTwt</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="TWITTER_CONSUMER_KEY">HRxOIIJsaa6ISt3GK08Yw</string>
+    <string name="TWITTER_CONSUMER_SECRET">8xODs70ZntyrmWUoFIFooUxQvIVfXtY0Jz7dbVxH94A</string>
+    <string name="TWITTER_CALLBACK_URL">oauth://twitter_callback</string>
+    <string name="load_newer">1</string>
+    <string name="load_timeline">0</string>
+    <string name="load_older">2</string>
+    <string name="title_activity_post">PostActivity</string>
+    <string name="title_activity_login_to_twitter">LoginToTwitterActivity</string>
+    <string name="load_more">Touch to load more ...</string>
+    <string name="loading">loading ...</string>
+
+</resources>
